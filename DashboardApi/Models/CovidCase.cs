@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace DashboardApi.Models
 {
-    public class CovidCaseCountry
+    public class CovidCase
     {
         [JsonProperty("country_region")]
         public string CountryRegion { get; set; }

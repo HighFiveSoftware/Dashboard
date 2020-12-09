@@ -25,7 +25,7 @@ namespace DashboardApi.Controllers
         {
             if (country == null)
             {
-                return NotFound(new {message = "Please provide a country"});
+                return Ok( new {country="worldwide", cases = await _covidService.GetCasesWorldWide(7)});
             }
             return Ok(new {country, cases = await _covidService.GetCasesByCountry(7, country.ToLower())});
         }

@@ -9,8 +9,8 @@ namespace DashboardApi.Services
 {
     public interface ICovidService
     {
-        Task<IEnumerable<CovidCaseCountry>> GetCasesByCountry(int limit, string countryName);
-        Task<IEnumerable<CovidCaseWorldwide>> GetCasesWorldWide(int limit);
+        Task<IEnumerable<CovidCase>> GetCasesByCountry(int limit, string countryName);
+        Task<IEnumerable<CovidCase>> GetCasesWorldWide(int limit);
     }
 
     public class CovidService : ICovidService
@@ -22,18 +22,22 @@ namespace DashboardApi.Services
             _connection = connection;
         }
 
-        public async Task<IEnumerable<CovidCaseCountry>> GetCasesByCountry(int limit, string countryName)
+        public async Task<IEnumerable<CovidCase>> GetCasesByCountry(int limit, string countryName)
         {
-            var cases = await _connection.QueryAsync<CovidCaseCountry>(
+            var cases = await _connection.QueryAsync<CovidCase>(
                 "SELECT country_region, entry_date, confirmed_today, deaths_today, recovered_today, confirmed_change, deaths_change, recovered_change FROM covid19_cases_jk_aggregate_view WHERE lower(country_region)=@countryName ORDER BY entry_date DESC LIMIT @limit",
                 new {countryName, limit});
 
             return cases;
         }
 
-        public Task<IEnumerable<CovidCaseWorldwide>> GetCasesWorldWide(int limit)
+        public async Task<IEnumerable<CovidCase>> GetCasesWorldWide(int limit)
         {
-            throw new NotImplementedException();
+            var cases = await _connection.QueryAsync<CovidCase>(
+                "SELECT 'worldwide' as country_region,entry_date, confirmed_today, deaths_today, recovered_today, confirmed_change, deaths_change, recovered_change FROM covid19_cases_jk_aggregate_worldwide_view ORDER BY entry_date DESC LIMIT @limit",
+                new {limit});
+
+            return cases;
         }
     }
 }
