@@ -27,10 +27,10 @@ namespace DashboardApi.Controllers
         {
             if (country == null)
             {
-                return await _covidService.GetCasesWorldWide(7);
+                return await _covidService.GetCasesWorldWide(30);
             }
 
-            return await _covidService.GetCasesByCountry(7, country.ToLower());
+            return await _covidService.GetCasesByCountry(30, country.ToLower());
         }
 
         [HttpGet("topCountries")]
@@ -49,7 +49,7 @@ namespace DashboardApi.Controllers
             return await _covidService.GetTopCountries(20, sortBy, DateTime.Today.AddDays(-1));
         }
 
-        [HttpGet("total")]
+        [HttpGet("totalCases")]
         public async Task<IEnumerable<CovidCaseTotal>> GetTotalCasesByCountry([FromQuery] string country)
         {
             if (country == null)
