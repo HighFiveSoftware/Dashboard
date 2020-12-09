@@ -49,15 +49,15 @@ namespace DashboardApi.Controllers
             return Ok(new { sorted_by = sortBy, topCountries = await _covidService.GetTopCountries(20, sortBy, DateTime.Today.AddDays(-1)) });
         }
 
-        [HttpGet("countCountry")]
-        public async Task<IActionResult> GetAllCasesCountFromCountry([FromQuery] string country)
+        [HttpGet("total")]
+        public async Task<IActionResult> GetTotalCasesByCountry([FromQuery] string country)
         {
             if (country == null)
             {
-                return Ok(new { country = "worldwide", cases = await _covidService.GetCasesCountWorldWide() });
+                return Ok(new { country = "worldwide", cases = await _covidService.GetTotalCasesWorldwide() });
             }
 
-            return Ok(new { country, cases = await _covidService.GetCasesCountTotalByCountry(country.ToLower()) });
+            return Ok(new { country = country, cases = await _covidService.GetTotalsCasesByCountry(country.ToLower()) });
         }
 
     }

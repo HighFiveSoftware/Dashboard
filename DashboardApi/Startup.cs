@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -81,6 +82,11 @@ namespace DashboardApi
             }
 
             app.UseRouting();
+            app.UseCors(x => x
+                .WithOrigins(Configuration["AllowedOrigins"])
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .AllowAnyHeader());
 
             app.UseAuthentication();
             app.UseAuthorization();
