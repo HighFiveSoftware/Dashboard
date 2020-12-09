@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
 using Xunit;
 using Microsoft.AspNetCore.Mvc.Testing;
-using System.Linq;
+using DashboardApi.Controllers;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DashboardApi.Tests
 {
@@ -29,12 +31,16 @@ namespace DashboardApi.Tests
         }
 
         [Fact]
-                public void GetReturnsCorrectNumberOfElements()
-                {
-                   var logger = Mock.Of<ILogger<Controllers.DashboardController>>();
-                    var controller = new Controllers.DashboardController(logger);
-            var result = controller.Ok();
-                    Assert.Equal("Wellcome1", result.ToString());
-                 }
+        public void GetWelcomeReturnsWelcomeMessage()
+        {
+            var controller = new DashboardController(new NullLogger<DashboardController>());
+            var result = controller.GetWelcome();
+            
+            var actionResult = Assert.IsType<ActionResult<Welcome>>(result);
+            var returnValue = Assert.IsType<Welcome>(actionResult.Value);
+            Assert.Equal("Welcome", returnValue.Message);
+            
+        }
     }
+    
 }

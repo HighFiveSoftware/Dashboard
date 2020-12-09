@@ -23,18 +23,18 @@ namespace DashboardApi.Controllers
 
         // [Route("allCases")]
         [HttpGet("")]
-        public async Task<IActionResult> GetAllCasesFromCountry([FromQuery] string country)
+        public async Task<IEnumerable<CovidCase>> GetAllCasesFromCountry([FromQuery] string country)
         {
             if (country == null)
             {
-                return Ok(new {country = "worldwide", cases = await _covidService.GetCasesWorldWide(7)});
+                return await _covidService.GetCasesWorldWide(7);
             }
 
-            return Ok(new {country, cases = await _covidService.GetCasesByCountry(7, country.ToLower())});
+            return await _covidService.GetCasesByCountry(7, country.ToLower());
         }
 
         [HttpGet("topCountries")]
-        public async Task<IActionResult> GetTopCountries([FromQuery] string sortBy)
+        public async Task<IEnumerable<CovidCase>> GetTopCountries([FromQuery] string sortBy)
         {
             var allowedKeys = new string[]
             {
@@ -46,19 +46,18 @@ namespace DashboardApi.Controllers
                 sortBy = "confirmed_today";
             }
 
-            return Ok(new { sorted_by = sortBy, topCountries = await _covidService.GetTopCountries(20, sortBy, DateTime.Today.AddDays(-1)) });
+            return await _covidService.GetTopCountries(20, sortBy, DateTime.Today.AddDays(-1));
         }
 
         [HttpGet("total")]
-        public async Task<IActionResult> GetTotalCasesByCountry([FromQuery] string country)
+        public async Task<IEnumerable<CovidCaseTotal>> GetTotalCasesByCountry([FromQuery] string country)
         {
             if (country == null)
             {
-                return Ok(new { country = "worldwide", cases = await _covidService.GetTotalCasesWorldwide() });
+                return await _covidService.GetTotalCasesWorldwide();
             }
 
-            return Ok(new { country = country, cases = await _covidService.GetTotalsCasesByCountry(country.ToLower()) });
+            return await _covidService.GetTotalsCasesByCountry(country.ToLower());
         }
-
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace DashboardApi.Controllers
 {
     [ApiController]
+    [Produces("application/json")]
     public class DashboardController : ControllerBase
     {
         private readonly ILogger<DashboardController> _logger;
@@ -18,16 +19,14 @@ namespace DashboardApi.Controllers
 
         [HttpGet]
         [Route("/")]
-        public IActionResult Welcome()
+        public ActionResult<Welcome> GetWelcome()
         {
-            return Ok(new {message = "Wellcome"});
+            return new Welcome { Message = "Welcome"};
         }
-        
+    }
 
-        // [HttpGet]
-        // public async Task<ActionResult<IEnumerable<Case>>> GetAllCases()
-        // {
-        //     return await _dbContext.Cases.ToListAsync();
-        // }
+    public class Welcome
+    {
+        public string Message { get; init; }
     }
 }

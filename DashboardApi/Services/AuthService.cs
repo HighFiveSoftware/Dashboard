@@ -36,7 +36,7 @@ namespace DashboardApi.Services
 
         public async Task<AuthResponse> Authenticate(UserDto userDto)
         {
-            var user = await _dbConnection.QueryFirstAsync<User>("SELECT id, email, password_hash FROM users WHERE email=@email",
+            var user = await _dbConnection.QueryFirstOrDefaultAsync<User>("SELECT id, email, password_hash FROM users WHERE email=@email",
                 new { email = userDto.Email});
             if (user == null || !BC.Verify(userDto.Password, user.PasswordHash))
                 throw new ServiceException(401, "Wrong Username or Password");
@@ -49,7 +49,7 @@ namespace DashboardApi.Services
 
         public async Task<string> RefreshAccessToken(RefreshTokenDto refreshTokenDto)
         {
-            var refreshToken = await _dbConnection.QueryFirstAsync<RefreshToken>(
+            var refreshToken = await _dbConnection.QueryFirstOrDefaultAsync<RefreshToken>(
                 "SELECT token, valid_until, expired, u.email as user_email FROM refresh_tokens JOIN users u on refresh_tokens.user_id = u.id WHERE token=@token",
                 new {token = refreshTokenDto.RefreshToken});
 
@@ -63,7 +63,7 @@ namespace DashboardApi.Services
             return accessToken;
         }
 
-        public async Task<string> GenerateRefreshToken(int userId)
+        async Task<string> GenerateRefreshToken(int userId)
         {
             string refreshToken;
             using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
@@ -80,7 +80,7 @@ namespace DashboardApi.Services
             return refreshToken;
         }
 
-        public string GenerateAccessToken(IEnumerable<Claim> claims)
+        string GenerateAccessToken(IEnumerable<Claim> claims)
         {
             var now = DateTime.UtcNow;
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_jwtSecret));
@@ -95,7 +95,7 @@ namespace DashboardApi.Services
 
         public async Task Register(UserDto userDto)
         {
-            if (await _dbConnection.QueryFirstOrDefaultAsync("SELECT FROM users WHERE email=@email",
+            if (await _dbConnection.QueryFirstOrDefaultAsync("SELECT email FROM users WHERE email=@email",
                 new {email = userDto.Email}) != null)
             {
                 throw new ServiceException(409, "User already exists");
