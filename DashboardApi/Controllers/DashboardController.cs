@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 namespace DashboardApi.Controllers
 {
     [ApiController]
-    [Route("cases")]
     public class DashboardController : ControllerBase
     {
         private readonly ILogger<DashboardController> _logger;
