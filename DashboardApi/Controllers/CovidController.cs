@@ -46,7 +46,19 @@ namespace DashboardApi.Controllers
                 sortBy = "confirmed_today";
             }
 
-            return Ok(new { sorted_by = sortBy, topCountries = await _covidService.GetTopCountries(20, sortBy, DateTime.Today.AddDays(-1))});
+            return Ok(new { sorted_by = sortBy, topCountries = await _covidService.GetTopCountries(20, sortBy, DateTime.Today.AddDays(-1)) });
         }
+
+        [HttpGet("countCountry")]
+        public async Task<IActionResult> GetAllCasesCountFromCountry([FromQuery] string country)
+        {
+            if (country == null)
+            {
+                return Ok(new { country = "worldwide", cases = await _covidService.GetCasesCountWorldWide() });
+            }
+
+            return Ok(new { country, cases = await _covidService.GetCasesCountTotalByCountry(country.ToLower()) });
+        }
+
     }
 }

@@ -12,6 +12,8 @@ namespace DashboardApi.Services
         Task<IEnumerable<CovidCase>> GetCasesByCountry(int limit, string countryName);
         Task<IEnumerable<CovidCase>> GetCasesWorldWide(int limit);
         Task<IEnumerable<CovidCase>> GetTopCountries(int limit, string sortBy, DateTime day);
+        Task<IEnumerable<CovidCaseTotal>> GetCasesCountTotalByCountry(string countryName);
+        Task<IEnumerable<CovidCaseTotal>> GetCasesCountWorldWide();
     }
 
     public class CovidService : ICovidService
@@ -45,9 +47,26 @@ namespace DashboardApi.Services
         {
             var topCountries = await _connection.QueryAsync<CovidCase>(
                 $"SELECT country_region, entry_date, confirmed_today, deaths_today, recovered_today, confirmed_change, deaths_change, recovered_today FROM covid19_cases_jk_aggregate_view WHERE entry_date = date_trunc('day', @day) ORDER BY {sortBy} DESC LIMIT @limit",
-                new {sortBy, limit, day});
+                new { sortBy, limit, day });
 
             return topCountries;
+        }
+
+        public async Task<IEnumerable<CovidCaseTotal>> GetCasesCountTotalByCountry(string countryName)
+        {
+            var totalCases = await _connection.QueryAsync<CovidCaseTotal>(
+                "SELECT sum(confirmed_today) as confirmed_total, sum(deaths_today) as deaths_total, sum(recovered_today) as recovered_total FROM covid19_cases_jk_aggregate_view WHERE lower(country_region) = @countryName",
+                new { countryName});
+
+            return totalCases;
+        }
+
+        public async Task<IEnumerable<CovidCaseTotal>> GetCasesCountWorldWide()
+        {
+            var totalCases = await _connection.QueryAsync<CovidCaseTotal>(
+                "SELECT  sum(confirmed_today) as confirmed_total, sum(deaths_today) as deaths_total, sum(recovered_today) as recovered_total FROM covid19_cases_jk_aggregate_worldwide_view");
+
+            return totalCases;
         }
     }
 }
