@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DashboardApi.Models;
 using DashboardApi.Services;
@@ -25,9 +27,26 @@ namespace DashboardApi.Controllers
         {
             if (country == null)
             {
-                return Ok( new {country="worldwide", cases = await _covidService.GetCasesWorldWide(7)});
+                return Ok(new {country = "worldwide", cases = await _covidService.GetCasesWorldWide(7)});
             }
+
             return Ok(new {country, cases = await _covidService.GetCasesByCountry(7, country.ToLower())});
+        }
+
+        [HttpGet("topCountries")]
+        public async Task<IActionResult> GetTopCountries([FromQuery] string sortBy)
+        {
+            var allowedKeys = new string[]
+            {
+                "confirmed_today", "deaths_today", "recovered_today", "confirmed_change", "deaths_change",
+                "recovered_change"
+            };
+            if (sortBy == null || !allowedKeys.Contains(sortBy))
+            {
+                sortBy = "confirmed_today";
+            }
+
+            return Ok(new { sorted_by = sortBy, topCountries = await _covidService.GetTopCountries(20, sortBy, DateTime.Today.AddDays(-1))});
         }
     }
 }

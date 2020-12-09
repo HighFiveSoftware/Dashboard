@@ -11,6 +11,7 @@ namespace DashboardApi.Services
     {
         Task<IEnumerable<CovidCase>> GetCasesByCountry(int limit, string countryName);
         Task<IEnumerable<CovidCase>> GetCasesWorldWide(int limit);
+        Task<IEnumerable<CovidCase>> GetTopCountries(int limit, string sortBy, DateTime day);
     }
 
     public class CovidService : ICovidService
@@ -38,6 +39,15 @@ namespace DashboardApi.Services
                 new {limit});
 
             return cases;
+        }
+
+        public async Task<IEnumerable<CovidCase>> GetTopCountries(int limit, string sortBy, DateTime day)
+        {
+            var topCountries = await _connection.QueryAsync<CovidCase>(
+                $"SELECT country_region, entry_date, confirmed_today, deaths_today, recovered_today, confirmed_change, deaths_change, recovered_today FROM covid19_cases_jk_aggregate_view WHERE entry_date = date_trunc('day', @day) ORDER BY {sortBy} DESC LIMIT @limit",
+                new {sortBy, limit, day});
+
+            return topCountries;
         }
     }
 }

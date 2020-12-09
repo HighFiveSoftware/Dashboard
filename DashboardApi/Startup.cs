@@ -12,7 +12,7 @@ using DashboardApi.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Converters;
 using Npgsql;
 
 namespace DashboardApi
@@ -34,6 +34,7 @@ namespace DashboardApi
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
             });
             services.AddSwaggerGen(c =>
             {
