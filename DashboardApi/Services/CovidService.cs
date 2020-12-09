@@ -55,7 +55,7 @@ namespace DashboardApi.Services
         public async Task<IEnumerable<CovidCaseTotal>> GetCasesCountTotalByCountry(string countryName)
         {
             var totalCases = await _connection.QueryAsync<CovidCaseTotal>(
-                "SELECT sum(confirmed_today) as confirmed_total, sum(deaths_today) as deaths_total, sum(recovered_today) as recovered_total FROM covid19_cases_jk_aggregate_view WHERE lower(country_region) = @countryName",
+               "SELECT confirmed_today as confirmed_total, deaths_today as deaths_total, recovered_today as recovered_total FROM covid19_cases_jk_aggregate_view WHERE lower(country_region) = @countryName ORDER BY entry_date DESC LIMIT 1",
                 new { countryName});
 
             return totalCases;
@@ -64,7 +64,7 @@ namespace DashboardApi.Services
         public async Task<IEnumerable<CovidCaseTotal>> GetCasesCountWorldWide()
         {
             var totalCases = await _connection.QueryAsync<CovidCaseTotal>(
-                "SELECT  sum(confirmed_today) as confirmed_total, sum(deaths_today) as deaths_total, sum(recovered_today) as recovered_total FROM covid19_cases_jk_aggregate_worldwide_view");
+                "SELECT  confirmed_today as confirmed_total, deaths_today as deaths_total, recovered_today as recovered_total FROM covid19_cases_jk_aggregate_worldwide_view ORDER BY entry_date DESC LIMIT 1");
 
             return totalCases;
         }

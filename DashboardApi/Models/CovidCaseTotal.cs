@@ -7,12 +7,12 @@ namespace DashboardApi.Models
     {
 
         [JsonProperty("confirmed_total")]
-        public Int64 ConfirmedTotal { get; set; }
+        public int ConfirmedTotal { get; set; }
 
         [JsonProperty("deaths_total")]
-        public Int64 DeathsTotal { get; set; }
+        public int DeathsTotal { get; set; }
 
         [JsonProperty("recovered_total")]
-        public Int64 RecoveredTotal { get; set; }
+        public int RecoveredTotal { get; set; }
     }
 }
