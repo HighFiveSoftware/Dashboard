@@ -20,7 +20,7 @@ namespace DashboardApi.Controllers
         [Route("/")]
         public IActionResult Welcome()
         {
-            return Ok(new {message = "Welcome"});
+            return Ok(new {message = "Wellcome"});
         }
         
 
