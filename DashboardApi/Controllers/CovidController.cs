@@ -23,14 +23,21 @@ namespace DashboardApi.Controllers
 
         // [Route("allCases")]
         [HttpGet("")]
-        public async Task<IEnumerable<CovidCase>> GetAllCasesFromCountry([FromQuery] string country)
+        public async Task<ActionResult<List<CovidCase>>> GetAllCasesFromCountry([FromQuery] string country)
         {
             if (country == null)
             {
-                return await _covidService.GetCasesWorldWide(30);
+                return (await _covidService.GetCasesWorldWide(30)).ToList();
             }
 
-            return await _covidService.GetCasesByCountry(30, country.ToLower());
+            try
+            {
+                return await _covidService.GetCasesByCountry(30, country.ToLower());
+            }
+            catch (ServiceException e)
+            {
+                return StatusCode(e.StatusCode, new {message = e.ErrorMessage});
+            }
         }
 
         [HttpGet("topCountries")]
@@ -50,14 +57,21 @@ namespace DashboardApi.Controllers
         }
 
         [HttpGet("totalCases")]
-        public async Task<IEnumerable<CovidCaseTotal>> GetTotalCasesByCountry([FromQuery] string country)
+        public async Task<ActionResult<CovidCaseTotal>> GetTotalCasesByCountry([FromQuery] string country)
         {
             if (country == null)
             {
                 return await _covidService.GetTotalCasesWorldwide();
             }
 
-            return await _covidService.GetTotalsCasesByCountry(country.ToLower());
+            try
+            {
+                return await _covidService.GetTotalsCasesByCountry(country.ToLower());
+            }
+            catch (ServiceException e)
+            {
+                return StatusCode(e.StatusCode, new {message = e.ErrorMessage});
+            }
         }
     }
 }
