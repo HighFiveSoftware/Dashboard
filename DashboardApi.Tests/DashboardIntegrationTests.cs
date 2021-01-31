@@ -18,7 +18,6 @@ namespace DashboardApi.Tests
             _factory = factory;
         }
 
-
         [Theory]
         [InlineData("/")]
         public async Task GetEndpointsSuccess(string url)
@@ -29,7 +28,7 @@ namespace DashboardApi.Tests
 
             response.EnsureSuccessStatusCode();
         }
-
+        
         [Fact]
         public void GetWelcomeReturnsWelcomeMessage()
         {
